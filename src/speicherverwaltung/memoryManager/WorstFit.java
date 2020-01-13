@@ -5,7 +5,7 @@ import speicherverwaltung.processManager.Process;
 public class WorstFit extends MemoryManager {
 
 	private int[] memory; //Memory als array
-	private int[][] gapTable = new int [10][2];    // [Lückenanfang] [Lückengröße]
+	private int[][] gapTable = new int [6][2];    // [Lückenanfang] [Lückengröße]
 	/*
 	 * Constructor baut den Speicher, hier: int array [cell] in der größe size [1024] mit dem Eintrag "-1" -> frei
 	 * kommt ein prozess, wird die ID in die cell geschrieben
@@ -15,16 +15,19 @@ public class WorstFit extends MemoryManager {
 		super(size);
 		memory = new int[size];
 		//setzt felder frei
+		System.out.println("setting up...");
 		for(int i : memory){
 			memory[i] = -1;
+			System.out.print(i + ": " +memory[i] + " |");
 		}
 		setGapTable();
 		printGapTable();
+		System.out.println("Done!");
 	}
 
 	private void printGapTable() {
-		for(int[] i : gapTable){
-			System.out.print();
+		for(int i = 0; i < gapTable.length; i++){
+			System.out.println("gapStart "+ gapTable[i][0] + " GapSize: " + gapTable[i][1]);
 		}
 	}
 
@@ -36,16 +39,20 @@ public class WorstFit extends MemoryManager {
 		boolean toggle = false;
 		int size = getMemorySize();
 		while(c < size){
+			System.out.print(c + ": " +memory[c] + " |");
 			if(memory[c] == -1){
+				System.out.println("found gap");
 				if(!toggle){
 					gapStart = c;
 					gapEnd = gapStart;
 					toggle = true;
 				}else{
+					System.out.println("same gap");
 					gapEnd++;
 				}
 			}else{
 				if (toggle){
+					System.out.println("gap closed");
 					gapTable[gapIndex][0] = gapStart;
 					gapTable[gapIndex][1] = gapEnd-gapStart;
 					gapIndex++;
@@ -83,8 +90,7 @@ public class WorstFit extends MemoryManager {
 	 */
 	@Override
 	public void printAllProcesses() {
-		// TODO Auto-generated method stub
-
+		//blub
 
 	}
 
