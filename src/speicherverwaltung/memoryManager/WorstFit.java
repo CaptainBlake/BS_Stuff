@@ -4,14 +4,11 @@ import speicherverwaltung.processManager.Process;
 
 public class WorstFit extends MemoryManager {
 
-	private int[] memory; //Memory als array
-	private int[][] gapTable = new int [6][2];    // [Lückenanfang] [Lückengröße]
-	private String[] names = new String[10];
-	/*
-	 * Constructor baut den Speicher, hier: int array [cell] in der größe size [1024] mit dem Eintrag "-1" -> frei
-	 * kommt ein prozess, wird die ID in die cell geschrieben
-	 * Aktuallisierungen werden iterativ über dem gesammten Speicher gemacht. (soll ja nicht schnell sein)
-	 */
+	private int[] memory;
+	final static int max = 10;
+	private int[][] gapTable = new int [max][2];    // [gapBegin] [gapSize]
+	private String[] names = new String[max];
+	//constructor
 	public WorstFit(int size) {
 		super(size);
 		memory = new int[size];
@@ -26,12 +23,8 @@ public class WorstFit extends MemoryManager {
 		System.out.println("Done!");
 	}
 
-	private void printGapTable() {
-		for(int i = 0; i < gapTable.length; i++){
-			System.out.println("gapStart "+ gapTable[i][0] + " GapSize: " + gapTable[i][1]);
-		}
-	}
 
+	//Creates a table with all gaps in it to get the biggest gap easily
 	private void setGapTable(){
 		int c = 0;
 		int gapStart = 0;
@@ -40,20 +33,19 @@ public class WorstFit extends MemoryManager {
 		boolean toggle = false;
 		int size = getMemorySize();
 		while(c < size){
-			//System.out.print(c + ": " + memory[c] + " |");
 			if(memory[c] == -1 && c < size - 1){
-				//System.out.println("found gap");
+				//Lücke gefunden
 				if(!toggle){
 					gapStart = c;
 					gapEnd = gapStart;
 					toggle = true;
 				}else{
-					//System.out.println("same gap");
+					//Selbe Lücke
 					gapEnd++;
 				}
 			}else{
 				if (toggle){
-					System.out.println("gap closed");
+					//Wenn die Lücke zuende ist
 					gapTable[gapIndex][0] = gapStart;
 					gapTable[gapIndex][1] = (c != size - 1) ? (gapEnd - gapStart) : (gapEnd + 1 - gapStart);
 					gapIndex++;
@@ -67,26 +59,32 @@ public class WorstFit extends MemoryManager {
 			c++;
 		}
 	}
-	//reserviert den speicher
+
+	//Prints the gap table
+	private void printGapTable() {
+		for(int i = 0; i < gapTable.length; i++){
+			System.out.println("gapStart "+ gapTable[i][0] + " GapSize: " + gapTable[i][1]);
+		}
+	}
+
+	//Allocates the memory and recalculates the gap table
 	@Override
 	public boolean allocateMemory(Process process) {
 		int pid = process.getId();
 		int psize = process.getSize();
 		int gapStart = getBiggestGap();
 		names[pid] = process.getName();
-
 		if (gapStart == -1)
 			return false;
 
 		for (int i = 0; i < psize; ++i) {
 			memory[gapStart + i] = pid;
 		}
-		
-		setGapTable();
-		printGapTable();
+		setGapTable(); //calc new Table
 		return true;
 	}
 
+	//Searches the biggest Gap in the gap table
 	private int getBiggestGap() {
 		int max = 0;
 		int index = -1;
@@ -101,14 +99,11 @@ public class WorstFit extends MemoryManager {
 		return index;
 	}
 
-
-	//gibt den speicher eines Prozesses wieder frei
+	// Frees the memory and recalculates the gap table
 	@Override
 	public void freeMemory(Process process) {
-		// TODO Auto-generated method stub
-
 		int pid = process.getId();
-		int psize = process.getSize();
+		int size = process.getSize();
 		int gapStart = -1;
 		names[pid] = null;
 		
@@ -121,17 +116,13 @@ public class WorstFit extends MemoryManager {
 			}
 		}
 
-		for (int i = 0; i < psize; ++i) {
+		for (int i = 0; i < size; ++i) {
 			memory[gapStart + i] = -1;
 		}
-		
 		setGapTable();
-		printGapTable();
-
 	}
-	/**
-	 * This function prints out all reserved memory in the following format:
-	 *
+
+	/** Sets up the process table and prints it down like below:
 	 * Id 	Name 	Size 	start 	EndPos
 	 * 0	p1		100		0		99
 	 * 1	p2		500		100		599
@@ -139,12 +130,14 @@ public class WorstFit extends MemoryManager {
 	 */
 	@Override
 	public void printAllProcesses() {
-        int[][] table = new int[10][4]; // [ID][Size][start][End]
+		//setting up tables with -1
+        int[][] table = new int[max][4]; // [ID][Size][start][End]
         for(int i=0;i<table.length;i++){
             for(int k=0;k<table[i].length;k++){
                 table[i][k] = -1;
             }
         }
+        //runs through the memory and indicates the processes
         int index = -1;
         for(int i=0;i<memory.length;i++){
             if(memory[i] != -1){
@@ -160,6 +153,7 @@ public class WorstFit extends MemoryManager {
                 table[index][3] = i;
             }
         }
+        //printing
         System.out.println("\n***Processtable***");
         System.out.println("[ID]\t[NAME]\t[Size]\t[Start]\t[End]");
         for(int i=0;i<table.length;i++){
