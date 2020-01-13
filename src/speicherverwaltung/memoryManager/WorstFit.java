@@ -16,10 +16,15 @@ public class WorstFit extends MemoryManager {
 		memory = new int[size];
 		//setzt felder frei
 		System.out.println("setting up...");
-		for(int i : memory){
+		for(int i = 0; i<size; ++i){
 			memory[i] = -1;
 			System.out.print(i + ": " +memory[i] + " |");
 		}
+		
+		// DEBUG
+		memory[453] = 123;
+		memory[565] = 57843;
+		
 		setGapTable();
 		printGapTable();
 		System.out.println("Done!");
@@ -39,8 +44,8 @@ public class WorstFit extends MemoryManager {
 		boolean toggle = false;
 		int size = getMemorySize();
 		while(c < size){
-			System.out.print(c + ": " +memory[c] + " |");
-			if(memory[c] == -1){
+			System.out.print(c + ": " + memory[c] + " |");
+			if(memory[c] == -1 && c < size - 1){
 				System.out.println("found gap");
 				if(!toggle){
 					gapStart = c;
@@ -54,7 +59,7 @@ public class WorstFit extends MemoryManager {
 				if (toggle){
 					System.out.println("gap closed");
 					gapTable[gapIndex][0] = gapStart;
-					gapTable[gapIndex][1] = gapEnd-gapStart;
+					gapTable[gapIndex][1] = (c != size - 1) ? (gapEnd - gapStart) : (gapEnd + 1 - gapStart);
 					gapIndex++;
 					if(gapIndex >= gapTable.length){
 						System.err.println("GapTable overflow!");
