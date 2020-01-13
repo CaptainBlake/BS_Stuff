@@ -18,13 +18,8 @@ public class WorstFit extends MemoryManager {
 		System.out.println("setting up...");
 		for(int i = 0; i<size; ++i){
 			memory[i] = -1;
-			System.out.print(i + ": " +memory[i] + " |");
+			//System.out.print(i + ": " +memory[i] + " |");
 		}
-		
-		// DEBUG
-		memory[453] = 123;
-		memory[565] = 57843;
-		
 		setGapTable();
 		printGapTable();
 		System.out.println("Done!");
@@ -44,15 +39,15 @@ public class WorstFit extends MemoryManager {
 		boolean toggle = false;
 		int size = getMemorySize();
 		while(c < size){
-			System.out.print(c + ": " + memory[c] + " |");
+			//System.out.print(c + ": " + memory[c] + " |");
 			if(memory[c] == -1 && c < size - 1){
-				System.out.println("found gap");
+				//System.out.println("found gap");
 				if(!toggle){
 					gapStart = c;
 					gapEnd = gapStart;
 					toggle = true;
 				}else{
-					System.out.println("same gap");
+					//System.out.println("same gap");
 					gapEnd++;
 				}
 			}else{
@@ -74,9 +69,16 @@ public class WorstFit extends MemoryManager {
 	//reserviert den speicher
 	@Override
 	public boolean allocateMemory(Process process) {
-
+		int pid = process.getId();
+		int psize = process.getSize();
+		int gapStart = getBiggestGap();
 		return false;
 	}
+
+	private int getBiggestGap() {
+		return 0;
+	}
+
 
 	//gibt den speicher eines Prozesses wieder frei
 	@Override
