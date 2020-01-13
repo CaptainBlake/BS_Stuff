@@ -72,19 +72,29 @@ public class WorstFit extends MemoryManager {
 		int pid = process.getId();
 		int psize = process.getSize();
 		int gapStart = getBiggestGap();
-		return false;
+
+		if (gapStart == -1)
+			return false;
+
+		for (int i = 0; i < psize; ++i) {
+			memory[gapStart + i] = pid;
+		}
+
+		return true;
 	}
 
 	private int getBiggestGap() {
 		int max = 0;
-		for(int i=0;i<gapTable.length;i++){
-			if(gapTable[0][1] == 0){
+		int index = -1;
+		for (int i = 0; i < gapTable.length; i++) {
+			if (gapTable[0][1] == 0) {
 				return -1;
-			}else if(gapTable[i][1] > max){
+			} else if (gapTable[i][1] > max) {
 				max = gapTable[i][1];
+                index = gapTable[i][0];
 			}
 		}
-		return max;
+		return index;
 	}
 
 
@@ -93,8 +103,23 @@ public class WorstFit extends MemoryManager {
 	public void freeMemory(Process process) {
 		// TODO Auto-generated method stub
 
-	}
+		int pid = process.getId();
+		int psize = process.getSize();
+		int gapStart = -1;
+		
+		for(int i = 0; i < memory.length; ++i)
+		{
+			if(memory[i] == pid)
+			{
+				gapStart = i;
+			}
+		}
 
+		for (int i = 0; i < psize; ++i) {
+			memory[gapStart + i] = pid;
+		}
+
+	}
 	/**
 	 * This function prints out all reserved memory in the following format:
 	 *
