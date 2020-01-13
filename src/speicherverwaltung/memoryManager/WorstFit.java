@@ -6,6 +6,7 @@ public class WorstFit extends MemoryManager {
 
 	private int[] memory; //Memory als array
 	private int[][] gapTable = new int [6][2];    // [Lückenanfang] [Lückengröße]
+	private String[] names = new String[10];
 	/*
 	 * Constructor baut den Speicher, hier: int array [cell] in der größe size [1024] mit dem Eintrag "-1" -> frei
 	 * kommt ein prozess, wird die ID in die cell geschrieben
@@ -72,6 +73,7 @@ public class WorstFit extends MemoryManager {
 		int pid = process.getId();
 		int psize = process.getSize();
 		int gapStart = getBiggestGap();
+		names[pid] = process.getName();
 
 		if (gapStart == -1)
 			return false;
@@ -108,6 +110,7 @@ public class WorstFit extends MemoryManager {
 		int pid = process.getId();
 		int psize = process.getSize();
 		int gapStart = -1;
+		names[pid] = null;
 		
 		for(int i = 0; i < memory.length; ++i)
 		{
@@ -136,6 +139,11 @@ public class WorstFit extends MemoryManager {
 	@Override
 	public void printAllProcesses() {
         int[][] table = new int[10][4]; // [ID][Size][start][End]
+        for(int i=0;i<table.length;i++){
+            for(int k=0;k<table[i].length;k++){
+                table[i][k] = -1;
+            }
+        }
         int index = -1;
         for(int i=0;i<memory.length;i++){
             if(memory[i] != -1){
@@ -147,7 +155,8 @@ public class WorstFit extends MemoryManager {
                     i++;
                     size++;
                 }
-                table[index][1] = i-1;
+                table[index][1] = i-table[index][2];
+                table[index][3] = i;
             }
         }
         System.out.println("\n***Processtable***");
@@ -156,5 +165,4 @@ public class WorstFit extends MemoryManager {
             System.out.println(table[i][0] + "\tp"+ table[i][0] + "\t" + table[i][1] + "\t" + table[i][2] + "\t" + table[i][3]);
         }
     }
-
 }
