@@ -76,7 +76,15 @@ public class WorstFit extends MemoryManager {
 	}
 
 	private int getBiggestGap() {
-		return 0;
+		int max = 0;
+		for(int i=0;i<gapTable.length;i++){
+			if(gapTable[0][1] == 0){
+				return -1;
+			}else if(gapTable[i][1] > max){
+				max = gapTable[i][1];
+			}
+		}
+		return max;
 	}
 
 
