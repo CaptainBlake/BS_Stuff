@@ -117,6 +117,7 @@ public class WorstFit extends MemoryManager {
 			if(memory[i] == pid)
 			{
 				gapStart = i;
+				break;
 			}
 		}
 
@@ -162,7 +163,7 @@ public class WorstFit extends MemoryManager {
         System.out.println("\n***Processtable***");
         System.out.println("[ID]\t[NAME]\t[Size]\t[Start]\t[End]");
         for(int i=0;i<table.length;i++){
-            System.out.println(table[i][0] + "\tp"+ table[i][0] + "\t" + table[i][1] + "\t" + table[i][2] + "\t" + table[i][3]);
+            System.out.println(table[i][0] + "\t" + (names[i] == null ? " " : names[i]) + "\t" + table[i][1] + "\t" + table[i][2] + "\t" + table[i][3]);
         }
     }
 }
