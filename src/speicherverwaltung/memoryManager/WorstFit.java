@@ -79,7 +79,9 @@ public class WorstFit extends MemoryManager {
 		for (int i = 0; i < psize; ++i) {
 			memory[gapStart + i] = pid;
 		}
-
+		
+		setGapTable();
+		printGapTable();
 		return true;
 	}
 
@@ -116,8 +118,11 @@ public class WorstFit extends MemoryManager {
 		}
 
 		for (int i = 0; i < psize; ++i) {
-			memory[gapStart + i] = pid;
+			memory[gapStart + i] = -1;
 		}
+		
+		setGapTable();
+		printGapTable();
 
 	}
 	/**
@@ -130,8 +135,26 @@ public class WorstFit extends MemoryManager {
 	 */
 	@Override
 	public void printAllProcesses() {
-		//blub
-
-	}
+        int[][] table = new int[10][4]; // [ID][Size][start][End]
+        int index = -1;
+        for(int i=0;i<memory.length;i++){
+            if(memory[i] != -1){
+                index++;
+                table[index][0] = memory[i];
+                table[index][2] = i;
+                int size = 1;
+                while(memory[i] == table[index][0]){
+                    i++;
+                    size++;
+                }
+                table[index][1] = i-1;
+            }
+        }
+        System.out.println("\n***Processtable***");
+        System.out.println("[ID]\t[NAME]\t[Size]\t[Start]\t[End]");
+        for(int i=0;i<table.length;i++){
+            System.out.println(table[i][0] + "\tp"+ table[i][0] + "\t" + table[i][1] + "\t" + table[i][2] + "\t" + table[i][3]);
+        }
+    }
 
 }
